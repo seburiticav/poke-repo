@@ -1,7 +1,10 @@
 import os
 import pdb
+import pandas as pd
 
 from pprint import pprint
+
+csv_path = 'https://raw.githubusercontent.com/seburiticav/poke-repo/refs/heads/feat/poke-type-inheritance/pokemon/First30Pokemons.csv'
 
 class Pokemon:
     definition ="""
@@ -9,12 +12,13 @@ class Pokemon:
     """
     def __init__(
             self,
-            name: str,
+            pokemonname: str,
             pokedex_num: int,
             type: str, 
             color: str,
             sex: str,
             level: int = 1
+            csv_path
         ) -> None:
         """
         Creates a basic pokemon
@@ -30,16 +34,17 @@ class Pokemon:
             ...
 
         """
-        self.name = name
-        self.pokedex_num = pokedex_num
-        self.main_type = type
-        self.color = color
-        self.sex = sex
-        self.level = level
+        self.__name = pokemonname
+        self.__pokedex_num = pokedex_num
+        self.__main_type = type
+        self.__color = color
+        self.__sex = sex
+        self.__level = level
+        self.__stats = Stats(csv_path, pokedex_num)
         #* Changed to protected
-        self._weaknesses = []
-        self._resistances = []
-        self._immunities = []
+        self.__weaknesses = []
+        self.__resistances = []
+        self.__immunities = []
 
     def attack(self) -> str:
         return f"{self.name} is attacking!"
@@ -60,6 +65,17 @@ class Pokemon:
             return "It's not very effective..."
         else:
             return "It's effective."
+class Stats():
+    def __init__(self, csv_path, hp: int, attack: int, defense: int, spattack: int, spdefense: int, speed: int, level = 1, pokedex_num):
+        df = pd.read_csv(csv_path)
+        row = df.loc[df['Pokedex Number'] == pokedex_num]
+        self.hp = int(row['HP'].values[0])
+        self.attack = int(row['Attack'].values[0])
+        self.defense = int(row['Defense'].values[0])
+        self.spattack = int(row['Sp. Attack'].values[0])
+        self.spdefense = int(row['Sp. Defense'].values[0])
+        self.speed = int(row['Speed'].values[0])
+        pass
 
 class Normal(Pokemon):
     def __init__(self, name, pokedex_num, color, sex, level=1):
