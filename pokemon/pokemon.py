@@ -4,9 +4,8 @@ import pandas as pd
 
 from pprint import pprint
 
-csv_path = 'https://raw.githubusercontent.com/seburiticav/poke-repo/refs/heads/feat/poke-type-inheritance/pokemon/First30Pokemons.csv'
-
 class Pokemon:
+    csv_path = 'https://raw.githubusercontent.com/seburiticav/poke-repo/refs/heads/feat/poke-type-inheritance/pokemon/First30Pokemons.csv'
     definition ="""
     Pocket Monster
     """
@@ -18,7 +17,6 @@ class Pokemon:
             color: str,
             sex: str,
             level: int = 1
-            csv_path
         ) -> None:
         """
         Creates a basic pokemon
@@ -42,19 +40,29 @@ class Pokemon:
         self.__level = level
         self.__stats = Stats(csv_path, pokedex_num)
         #* Changed to protected
-        self.__weaknesses = []
-        self.__resistances = []
-        self.__immunities = []
+        self._weaknesses = []
+        self._resistances = []
+        self._immunities = []
 
     def attack(self) -> str:
-        return f"{self.name} is attacking!"
+        return f"{self.__name} is attacking!"
 
-    def level_up(self):
-        self.level += 1
-        print(f"{self.name} leveled up to level {self.level}!")
+    def level_up(self, hp, attack, defense, spattack, spdefense, speed):
+        if self.__level < 100:
+            self.__level += 1
+            self.__stats.hp = round(self.__stats.hp * 1.03)
+            self.__stats.attack = round(self.__stats.attack * 1.03)
+            self.__stats.defense = round(self.__stats.defense * 1.03)
+            self.__stats.spattack = round(self.__stats.spattack * 1.03)
+            self.__stats.spdefense = round(self.__stats.spdefense * 1.03)
+            self.__stats.defense = round(self.__stats.defense * 1.03)
+            
+            print(f"{self.__name} leveled up to level {self.__level}!")
+        else:
+            print(f"{self.__name} is already max level!")
 
     def __str__(self):
-        return f"{self.name} (#{self.pokedex_num}) - Type: {self.main_type}, Level: {self.level}"
+        return f"{self.__name} (#{self.__pokedex_num}) - Type: {self.__main_type}, Level: {self.__level}"
         
     def receive_attack(self, attack_type):
         if attack_type in self._immunities:
@@ -65,18 +73,31 @@ class Pokemon:
             return "It's not very effective..."
         else:
             return "It's effective."
+            
+    def stats(self):
+        return self.__stats
+        
 class Stats():
-    def __init__(self, csv_path, hp: int, attack: int, defense: int, spattack: int, spdefense: int, speed: int, level = 1, pokedex_num):
+    def __init__(self, csv_path, pokedex_num):
         df = pd.read_csv(csv_path)
         row = df.loc[df['Pokedex Number'] == pokedex_num]
-        self.hp = int(row['HP'].values[0])
-        self.attack = int(row['Attack'].values[0])
-        self.defense = int(row['Defense'].values[0])
-        self.spattack = int(row['Sp. Attack'].values[0])
-        self.spdefense = int(row['Sp. Defense'].values[0])
-        self.speed = int(row['Speed'].values[0])
-        pass
-
+        self.base_hp = int(row['HP'].values[0])
+        self.base_attack = int(row['Attack'].values[0])
+        self.base_defense = int(row['Defense'].values[0])
+        self.base_spattack = int(row['Sp. Attack'].values[0])
+        self.base_spdefense = int(row['Sp. Defense'].values[0])
+        self.base_speed = int(row['Speed'].values[0])
+        self.hp = self.base_hp
+        self.attack = self.base_attack
+        self.defense = self.base_defense
+        self.spattack = self.base_spattack
+        self.spdefense = self.base_spdefense
+        self.speed = self.base_speed
+    def __str__(self):
+        return (
+            f"HP: {self.hp}, Attack: {self.attack}, Defense: {self.defense}, "
+            f"Sp. Attack: {self.spattack}, Sp. Defense: {self.spdefense}, Speed: {self.speed}"
+        )
 class Normal(Pokemon):
     def __init__(self, name, pokedex_num, color, sex, level=1):
         super().__init__(name, pokedex_num, "Normal", color, sex, level)
@@ -216,3 +237,13 @@ if __name__ == "__main__":
     )
     print(bulbasaur)
     bulbasaur.attack()
+    bulbasaur.stats()
+    charmander = Pokemon(
+        "charmander",
+        4,
+        "fire",
+        "orange",
+        "male"
+    )
+    charmander.attack()
+    charmander.stats()
