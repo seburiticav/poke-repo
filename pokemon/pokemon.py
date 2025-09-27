@@ -50,12 +50,12 @@ class Pokemon:
     def level_up(self, hp, attack, defense, spattack, spdefense, speed):
         if self.__level < 100:
             self.__level += 1
-            self.__stats.hp = round(self.__stats.hp * 1.03)
-            self.__stats.attack = round(self.__stats.attack * 1.03)
-            self.__stats.defense = round(self.__stats.defense * 1.03)
-            self.__stats.spattack = round(self.__stats.spattack * 1.03)
-            self.__stats.spdefense = round(self.__stats.spdefense * 1.03)
-            self.__stats.defense = round(self.__stats.defense * 1.03)
+            self.__stats.hp = round(self.__stats.hp * 1.020)
+            self.__stats.attack = round(self.__stats.attack * 1.017)
+            self.__stats.defense = round(self.__stats.defense * 1.016)
+            self.__stats.spattack = round(self.__stats.spattack * 1.017)
+            self.__stats.spdefense = round(self.__stats.spdefense * 1.016)
+            self.__stats.defense = round(self.__stats.defense * 1.015)
             
             print(f"{self.__name} leveled up to level {self.__level}!")
         else:
